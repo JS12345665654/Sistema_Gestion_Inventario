@@ -1,0 +1,122 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model IEnumerable<Almacen>
+@{
+    ViewData["Title"] = "Almacenes";
+}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Almacenes</h1>
+        @if (User.IsInRole("Administrador"))
+        {
+            <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg me-1"></i> Nuevo Almacén</a>
+        }
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+        <input id="searchInput" type="text" class="form-control w-25" placeholder="Buscar por código o nombre...">
+    </div>
+
+    <div class="d-flex justify-content-end mb-4">
+        <form asp-controller="Almacenes" asp-action="ExportarPDF" method="post">
+            <input type="hidden" name="q" id="searchTermPDF" />
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Exportar a PDF
+            </button>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table id="tabla" class="table table-dark table-hover table-bordered rounded shadow">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.IdAlmacen</td>
+                        <td>@a.Codigo</td>
+                        <td>@a.Nombre</td>
+                        <td>@a.Direccion</td>
+                        <td>@(a.Activo ? "Sí" : "No")</td>
+                        <td>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <a class="btn btn-sm btn-warning me-1" asp-action="Edit" asp-route-id="@a.IdAlmacen">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                            }
+                            <a class="btn btn-sm btn-info me-1" asp-action="Details" asp-route-id="@a.IdAlmacen">
+                                <i class="bi bi-eye-fill"></i> Detalle
+                            </a>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <button type="button" class="btn btn-sm btn-danger btn-eliminar"
+                                        data-url="@Url.Action("Delete", new { id = a.IdAlmacen })"
+                                        data-nombre="@a.Nombre">
+                                    <i class="bi bi-trash-fill"></i> Borrar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmEliminarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">¿Eliminar <strong id="modalNombre"></strong>?</div>
+            <div class="modal-footer">
+                <form id="formEliminar" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="btnConfirmarEliminar" type="button" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function(){
+          $('#tabla').DataTable({
+            language:{url:"//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"},
+            ordering:true,paging:true,searching:false
+          });
+        });
+        const input=document.getElementById("searchInput");
+        input.addEventListener("input",function(){
+          const v=this.value.toLowerCase().trim();
+          document.getElementById("searchTermPDF").value=v;
+          document.querySelectorAll('#tabla tbody tr').forEach(r=>{
+            const cod=r.cells[1].textContent.toLowerCase();
+            const nom=r.cells[2].textContent.toLowerCase();
+            r.style.display=(cod.includes(v)||nom.includes(v))?'':'none';
+          });
+        });
+        document.addEventListener('DOMContentLoaded',()=>{
+          let url=null;const modal=new bootstrap.Modal(document.getElementById('confirmEliminarModal'));
+          const btn=document.getElementById('btnConfirmarEliminar');const nameHolder=document.getElementById('modalNombre');
+          const form=document.getElementById('formEliminar');
+          document.querySelectorAll('.btn-eliminar').forEach(b=>{
+            b.addEventListener('click',function(){url=this.dataset.url;nameHolder.textContent=this.dataset.nombre||'este almacén';modal.show();});
+          });
+          btn.addEventListener('click',()=>{if(!url)return;form.action=url;form.submit();});
+        });
+    </script>
+}

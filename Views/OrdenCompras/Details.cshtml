@@ -1,0 +1,74 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model OrdenCompra
+@{
+    ViewData["Title"] = "Detalle de Orden de Compra";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-info-circle me-2"></i>Detalle de orden de compra
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-bold">ID</dt>
+                <dd class="col-sm-9">@Model.IdOrdenCompra</dd>
+
+                <dt class="col-sm-3 fw-bold">N° OC</dt>
+                <dd class="col-sm-9">@Model.NumeroOc</dd>
+
+                <dt class="col-sm-3 fw-bold">Proveedor</dt>
+                <dd class="col-sm-9">@Model.IdProveedorNavigation?.RazonSocial ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Almacén recepción</dt>
+                <dd class="col-sm-9">@Model.IdAlmacenRecepcionNavigation?.Codigo ?? "- "</dd>
+
+                <dt class="col-sm-3 fw-bold">Fecha emisión</dt>
+                <dd class="col-sm-9">@Model.FechaEmision</dd>
+
+                <dt class="col-sm-3 fw-bold">Fecha esperada</dt>
+                <dd class="col-sm-9">@Model.FechaEsperada?.ToString() ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Moneda</dt>
+                <dd class="col-sm-9">@Model.Moneda</dd>
+
+                <dt class="col-sm-3 fw-bold">Estado</dt>
+                <dd class="col-sm-9">
+                    @{
+                        var estados = new[] { "Borrador", "Aprobada", "Parcial", "Recibida", "Anulada" };
+                        var idx = (int)Model.Estado;
+                        var nombre = (idx >= 0 && idx < estados.Length) ? estados[idx] : Model.Estado.ToString();
+                    }
+                    @nombre
+                </dd>
+
+                <dt class="col-sm-3 fw-bold">Observaciones</dt>
+                <dd class="col-sm-9">@Model.Observaciones ?? "-"</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        @if(User.IsInRole("Administrador"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.IdOrdenCompra" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i> Editar
+            </a>
+        }
+        @if ((User.IsInRole("Administrador") && Model.Estado != 3))
+        {
+            <a class="btn btn-success"
+               asp-controller="RecepcionesOC"
+               asp-action="Recibir"
+               asp-route-id="@Model.IdOrdenCompra">
+                <i class="bi bi-box-arrow-in-down me-1"></i> Recibir OC
+            </a>
+        }
+
+    </div>
+</div>

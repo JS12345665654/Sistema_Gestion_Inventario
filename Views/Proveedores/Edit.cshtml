@@ -1,0 +1,95 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model Proveedor
+@{
+    ViewData["Title"] = "Editar Proveedor";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-pencil-square me-2"></i>Editar proveedor
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <input type="hidden" asp-for="IdProveedor" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="RazonSocial" class="form-label fw-bold">Razón Social</label>
+                        <input asp-for="RazonSocial" class="form-control" />
+                        <span asp-validation-for="RazonSocial" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Cuit" class="form-label fw-bold">CUIT</label>
+                        <input asp-for="Cuit" class="form-control" />
+                        <span asp-validation-for="Cuit" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label fw-bold">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Telefono" class="form-label fw-bold">Teléfono</label>
+                        <input asp-for="Telefono" class="form-control" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="Direccion" class="form-label fw-bold">Dirección</label>
+                        <input asp-for="Direccion" class="form-control" />
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Cp" class="form-label fw-bold">Código Postal</label>
+                        <input asp-for="Cp" class="form-control" />
+                        <span asp-validation-for="Cp" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Ciudad" class="form-label fw-bold">Ciudad</label>
+                        <input asp-for="Ciudad" class="form-control" />
+                        <span asp-validation-for="Ciudad" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Provincia" class="form-label fw-bold">Provincia</label>
+                        <input asp-for="Provincia" class="form-control" />
+                        <span asp-validation-for="Provincia" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="LeadTimeDias" class="form-label fw-bold">Días que demora a la entrega del producto</label>
+                        <input asp-for="LeadTimeDias" class="form-control" />
+                        <span asp-validation-for="LeadTimeDias" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 form-check mt-2">
+                        <input asp-for="Activo" class="form-check-input" type="checkbox" />
+                        <label asp-for="Activo" class="form-check-label fw-bold">Activo</label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save2 me-1"></i> Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

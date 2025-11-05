@@ -1,0 +1,82 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model OrdenCompraDetalle
+@{
+    ViewData["Title"] = "Editar Ítem de OC";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-pencil-square me-2"></i>Editar ítem de orden de compra
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <input type="hidden" asp-for="IdOrdenCompraDetalle" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="IdOrdenCompra" class="form-label fw-bold">Orden de compra</label>
+                        <select asp-for="IdOrdenCompra" class="form-select"
+                                asp-items="@(ViewData["IdOrdenCompra"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                            <option value="">-- Seleccionar orden --</option>
+                        </select>
+                        <span asp-validation-for="IdOrdenCompra" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdProducto" class="form-label fw-bold">Producto</label>
+                        <select asp-for="IdProducto" class="form-select"
+                                asp-items="@(ViewData["IdProducto"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                            <option value="">-- Seleccionar producto --</option>
+                        </select>
+                        <span asp-validation-for="IdProducto" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="CantidadPedida" class="form-label fw-bold">Cantidad pedida</label>
+                        <input asp-for="CantidadPedida" class="form-control" step="0.01" />
+                        <span asp-validation-for="CantidadPedida" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="CantidadRecibida" class="form-label fw-bold">Cantidad recibida</label>
+                        <input asp-for="CantidadRecibida" class="form-control" step="0.01" />
+                        <span asp-validation-for="CantidadRecibida" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="CostoUnitario" class="form-label fw-bold">Costo unitario</label>
+                        <input asp-for="CostoUnitario" class="form-control" step="0.01" />
+                        <span asp-validation-for="CostoUnitario" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="ImpuestoPct" class="form-label fw-bold">% Impuesto</label>
+                        <input asp-for="ImpuestoPct" class="form-control" step="0.01" />
+                        <span asp-validation-for="ImpuestoPct" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="DescuentoPct" class="form-label fw-bold">% Descuento</label>
+                        <input asp-for="DescuentoPct" class="form-control" step="0.01" />
+                        <span asp-validation-for="DescuentoPct" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save2 me-1"></i> Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

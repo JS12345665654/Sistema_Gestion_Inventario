@@ -1,0 +1,110 @@
+﻿@model Sistema_Gestion_Inventario.Models.LoginRegister
+@{
+    ViewData["Title"] = "Iniciar Sesión / Registrarse";
+    string? mensaje = TempData["Mensaje"] as string;
+    ViewData["HideNav"] = true;
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Bienvenido</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <!-- LOGIN -->
+            <div id="loginForm">
+                <h4 class="text-center">Iniciar Sesión</h4>
+                <form asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@(ViewData["ReturnUrl"] ?? Context.Request.Query["ReturnUrl"].ToString())" />
+                    <div class="mb-3">
+                        <label asp-for="Login.Email" class="form-label"></label>
+                        <input asp-for="Login.Email" class="form-control" />
+                        <span asp-validation-for="Login.Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Login.Password" class="form-label"></label>
+                        <input asp-for="Login.Password" class="form-control" type="password" />
+                        <span asp-validation-for="Login.Password" class="text-danger"></span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Ingresar</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    ¿No tenés una cuenta? <span class="form-toggle text-info" style="cursor:pointer" onclick="mostrarRegistro()">Registrate</span>
+                </div>
+            </div>
+
+            <!-- REGISTRO -->
+            <div id="registerForm" class="d-none">
+                <h4 class="text-center">Crear Cuenta</h4>
+                <form asp-action="Registrar" method="post" onsubmit="return validarRegistro()">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@(ViewData["ReturnUrl"] ?? Context.Request.Query["ReturnUrl"].ToString())" />
+                    <div class="mb-3">
+                        <label asp-for="Register.Nombre" class="form-label"></label>
+                        <input asp-for="Register.Nombre" class="form-control" />
+                        <span asp-validation-for="Register.Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Register.Email" class="form-label"></label>
+                        <input asp-for="Register.Email" class="form-control" id="emailRegistro" />
+                        <span asp-validation-for="Register.Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Register.Password" class="form-label"></label>
+                        <input asp-for="Register.Password" class="form-control" type="password" />
+                        <span asp-validation-for="Register.Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-info">
+                            <i class="bi bi-info-circle"></i> El rol será automáticamente "Usuario".
+                        </span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Registrarme</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    ¿Ya tenés una cuenta? <span class="form-toggle text-info" style="cursor:pointer" onclick="mostrarLogin()">Ingresá acá</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #07263a; }
+    h2 { color: #fff; }
+    footer { background-color: #07263a; color: #fff; }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function mostrarRegistro() {
+            document.getElementById("loginForm").classList.add("d-none");
+            document.getElementById("registerForm").classList.remove("d-none");
+        }
+        function mostrarLogin() {
+            document.getElementById("registerForm").classList.add("d-none");
+            document.getElementById("loginForm").classList.remove("d-none");
+        }
+        function validarRegistro() {
+            const emailInput = document.getElementById("emailRegistro").value.trim();
+            const regexEmail = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            if (!regexEmail.test(emailInput)) {
+                Swal.fire({ icon: 'warning', title: 'Email inválido', text: 'Ingrese un formato de correo válido.' });
+                return false;
+            }
+            return true;
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            var mensaje = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(mensaje ?? ""));
+            if (mensaje && mensaje.trim() !== "") { toastr.error(mensaje); }
+        });
+    </script>
+}

@@ -1,0 +1,99 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model OrdenCompra
+@{
+    ViewData["Title"] = "Crear Orden de Compra";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-file-earmark-plus me-2"></i>Crear nueva orden de compra
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="NumeroOc" class="form-label fw-bold">N° OC</label>
+                        <input asp-for="NumeroOc" class="form-control" maxlength="30" />
+                        <span asp-validation-for="NumeroOc" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label asp-for="IdProveedor" class="form-label fw-bold">Proveedor</label>
+                        <select asp-for="IdProveedor" class="form-select"
+                                asp-items="@(ViewData["IdProveedor"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                            <option value="">-- Seleccionar proveedor --</option>
+                        </select>
+                        <span asp-validation-for="IdProveedor" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="IdAlmacenRecepcion" class="form-label fw-bold">Almacén recepción</label>
+                        <select asp-for="IdAlmacenRecepcion" class="form-select"
+                                asp-items="@(ViewData["IdAlmacenRecepcion"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList)">
+                            <option value="">-- Seleccionar almacén --</option>
+                        </select>
+                        <span asp-validation-for="IdAlmacenRecepcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="FechaEmision" class="form-label fw-bold">Fecha de emisión</label>
+                        <input asp-for="FechaEmision" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="FechaEmision" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="FechaEsperada" class="form-label fw-bold">Fecha esperada</label>
+                        <input asp-for="FechaEsperada" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="FechaEsperada" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label asp-for="Moneda" class="form-label fw-bold">Moneda</label>
+                        <select asp-for="Moneda" class="form-select">
+                            <option value="ARS">ARS</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                        <span asp-validation-for="Moneda" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label asp-for="Estado" class="form-label fw-bold">Estado</label>
+                        <select asp-for="Estado" class="form-select">
+                            <option value="0">Borrador</option>
+                            <option value="1">Aprobada</option>
+                            <option value="2">Parcial</option>
+                            <option value="3">Recibida</option>
+                            <option value="4">Anulada</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Observaciones" class="form-label fw-bold">Observaciones</label>
+                        <textarea asp-for="Observaciones" rows="3" class="form-control"></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle me-1"></i> Crear orden
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,54 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model OrdenCompraDetalle
+@{
+    ViewData["Title"] = "Detalle Ítem de OC";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-info-circle me-2"></i>Detalle de ítem de orden de compra
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-bold">ID</dt>
+                <dd class="col-sm-9">@Model.IdOrdenCompraDetalle</dd>
+
+                <dt class="col-sm-3 fw-bold">Orden de compra</dt>
+                <dd class="col-sm-9">@Model.IdOrdenCompraNavigation?.NumeroOc ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Producto</dt>
+                <dd class="col-sm-9">@Model.IdProductoNavigation?.Nombre ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Cantidad pedida</dt>
+                <dd class="col-sm-9">@Model.CantidadPedida</dd>
+
+                <dt class="col-sm-3 fw-bold">Cantidad recibida</dt>
+                <dd class="col-sm-9">@Model.CantidadRecibida</dd>
+
+                <dt class="col-sm-3 fw-bold">Costo unitario</dt>
+                <dd class="col-sm-9">@Model.CostoUnitario.ToString("N2")</dd>
+
+                <dt class="col-sm-3 fw-bold">% Impuesto</dt>
+                <dd class="col-sm-9">@Model.ImpuestoPct?.ToString("N2") ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">% Descuento</dt>
+                <dd class="col-sm-9">@Model.DescuentoPct?.ToString("N2") ?? "-"</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        @if (User.IsInRole("Administrador"))
+        {
+          <a asp-action="Edit" asp-route-id="@Model.IdOrdenCompraDetalle" class="btn btn-primary">
+            <i class="bi bi-pencil-square me-1"></i> Editar
+          </a>
+        }
+    </div>
+</div>

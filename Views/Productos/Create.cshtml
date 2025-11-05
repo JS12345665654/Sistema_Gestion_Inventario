@@ -1,0 +1,157 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model Producto
+@{
+    ViewData["Title"] = "Crear Producto";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-box-seam me-2"></i>Crear nuevo producto
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="Sku" class="form-label fw-bold">SKU</label>
+                        <input asp-for="Sku" class="form-control" />
+                        <span asp-validation-for="Sku" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="Nombre" class="form-label fw-bold">Nombre</label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- Dropdown animado/buscable (Select2) -->
+                        <label for="IdCategoria" class="form-label fw-bold">Categoría</label>
+                        <select id="IdCategoria" name="IdCategoria" class="form-select select2" asp-items="@(ViewData["IdCategoria"] as SelectList)">
+                            <option value="">Seleccione una categoría...</option>
+                        </select>
+                        <span asp-validation-for="IdCategoria" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="IdProveedorPrincipal" class="form-label fw-bold">Proveedor principal</label>
+                        <select id="IdProveedorPrincipal" name="IdProveedorPrincipal" class="form-select select2" asp-items="@(ViewData["IdProveedorPrincipal"] as SelectList)">
+                            <option value="">(Opcional) Seleccione proveedor...</option>
+                        </select>
+                        <span asp-validation-for="IdProveedorPrincipal" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="UnidadMedida" class="form-label fw-bold">Unidad</label>
+                        <input asp-for="UnidadMedida" class="form-control" />
+                        <span asp-validation-for="UnidadMedida" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="CostoStd" class="form-label fw-bold">Costo</label>
+                        <input asp-for="CostoStd" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="CostoStd" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="PrecioSugerido" class="form-label fw-bold">Precio</label>
+                        <input asp-for="PrecioSugerido" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="PrecioSugerido" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="CodigoBarras" class="form-label fw-bold">Código de barras</label>
+                        <input asp-for="CodigoBarras" class="form-control" />
+                        <span asp-validation-for="CodigoBarras" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3 form-check mt-2">
+                        <input asp-for="Activo" class="form-check-input" type="checkbox" />
+                        <label asp-for="Activo" class="form-check-label fw-bold">Activo</label>
+                    </div>
+
+                    <div class="col-12"><hr /></div>
+
+                    <!-- Imagen (archivo o URL) -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Imagen del producto</label>
+                        <div class="form-text mb-1">Elegí subir un archivo <strong>o</strong> indicar una URL pública.</div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="imgMode" id="imgModeFile" checked>
+                            <label class="form-check-label" for="imgModeFile">Subir archivo</label>
+                        </div>
+                        <input type="file" name="imagenFile" id="imagenFile" class="form-control mt-2" accept=".jpg,.jpeg,.png,.gif,.webp">
+
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="radio" name="imgMode" id="imgModeUrl">
+                            <label class="form-check-label" for="imgModeUrl">Usar URL</label>
+                        </div>
+                        <input type="url" name="imagenUrl" id="imagenUrl" class="form-control mt-2" placeholder="https://... (jpg/png/webp)" disabled>
+                    </div>
+
+                    <!-- PDF local-->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Ficha técnica (PDF)</label>
+                        <input type="file" name="fichaFile" class="form-control" accept=".pdf">
+                        <div class="form-text">Solo PDF, máx 10MB.</div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle me-1"></i> Crear Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container .select2-selection--single {
+            height: 38px;
+            padding: 5px 8px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
+    </style>
+}
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(function () {
+            $('.select2').select2({
+                width: '100%',
+                placeholder: 'Seleccione...',
+                allowClear: true
+            });
+        });
+
+        const rFile = document.getElementById('imgModeFile');
+        const rUrl  = document.getElementById('imgModeUrl');
+        const fFile = document.getElementById('imagenFile');
+        const fUrl  = document.getElementById('imagenUrl');
+        function sync() {
+            fFile.disabled = !rFile.checked;
+            fUrl.disabled  = !rUrl.checked;
+            if (rFile.checked) fUrl.value = "";
+            if (rUrl.checked)  fFile.value = null;
+        }
+        rFile.addEventListener('change', sync);
+        rUrl.addEventListener('change', sync);
+        sync();
+    </script>
+}

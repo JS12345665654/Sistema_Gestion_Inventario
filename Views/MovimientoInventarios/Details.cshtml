@@ -1,0 +1,67 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model MovimientoInventario
+@{
+    ViewData["Title"] = "Detalle de Movimiento";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-info-circle me-2"></i>Detalle de movimiento
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-bold">ID</dt>
+                <dd class="col-sm-9">@Model.IdMovimiento</dd>
+
+                <dt class="col-sm-3 fw-bold">Producto</dt>
+                <dd class="col-sm-9">@Model.IdProductoNavigation?.Nombre ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Almacén</dt>
+                <dd class="col-sm-9">@Model.IdAlmacenNavigation?.Codigo ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Tipo</dt>
+                <dd class="col-sm-9">@Model.Tipo</dd>
+
+                <dt class="col-sm-3 fw-bold">Motivo</dt>
+                <dd class="col-sm-9">@Model.Motivo</dd>
+
+                <dt class="col-sm-3 fw-bold">Cantidad</dt>
+                <dd class="col-sm-9">@Model.Cantidad</dd>
+
+                <dt class="col-sm-3 fw-bold">Costo unitario</dt>
+                <dd class="col-sm-9">@Model.CostoUnitario?.ToString("N2") ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">OC Detalle</dt>
+                <dd class="col-sm-9">@Model.IdOrdenCompraDetalleNavigation?.IdOrdenCompraDetalle.ToString() ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Fecha movimiento</dt>
+                <dd class="col-sm-9">@Model.FechaMovimiento</dd>
+
+                <dt class="col-sm-3 fw-bold">Referencia</dt>
+                <dd class="col-sm-9">@Model.Referencia ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Usuario operador (Id)</dt>
+                <dd class="col-sm-9">@Model.IdUsuarioOperador ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Observaciones</dt>
+                <dd class="col-sm-9">@Model.Observaciones ?? "-"</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+
+        @if(User.IsInRole("Administrador"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.IdMovimiento" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i> Editar
+            </a>
+        }
+    </div>
+</div>

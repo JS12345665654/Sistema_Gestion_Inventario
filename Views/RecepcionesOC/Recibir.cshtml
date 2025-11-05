@@ -1,0 +1,75 @@
+﻿@model Sistema_Gestion_Inventario.Controllers.RecepcionesOCController.RecepcionOCVM
+@{
+    ViewData["Title"] = "Recepción de OC";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="fw-bold mb-3"><i class="bi bi-box-arrow-in-down me-2"></i>Recepción OC @Model.NumeroOc</h2>
+
+    <form asp-action="Recibir" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="IdOrdenCompra" />
+
+        <div class="card shadow mb-4">
+            <div class="card-body bg-light">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label asp-for="IdAlmacenRecepcion" class="form-label"></label>
+                        <select asp-for="IdAlmacenRecepcion" class="form-select" asp-items="@(ViewBag.Almacenes)">
+                            <option value="">Seleccione almacén…</option>
+                        </select>
+                        <span asp-validation-for="IdAlmacenRecepcion" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover table-bordered rounded shadow">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Producto</th>
+                        <th class="text-end">Pedida</th>
+                        <th class="text-end">Recibida</th>
+                        <th class="text-end">Pendiente</th>
+                        <th style="width:180px;">A recibir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Lineas.Count; i++)
+                    {
+                        <tr>
+                            <td>@Model.Lineas[i].Sku</td>
+                            <td>@Model.Lineas[i].Producto</td>
+                            <td class="text-end">@Model.Lineas[i].CantidadPedida.ToString("N2")</td>
+                            <td class="text-end">@Model.Lineas[i].CantidadRecibida.ToString("N2")</td>
+                            <td class="text-end">@Model.Lineas[i].Pendiente.ToString("N2")</td>
+                            <td>
+                                <input type="hidden" name="Lineas[@i].IdOrdenCompraDetalle" value="@Model.Lineas[i].IdOrdenCompraDetalle" />
+                                <input type="number" step="0.01" min="0"
+                                       class="form-control"
+                                       name="Lineas[@i].ARecibir"
+                                       value="@(Model.Lineas[i].ARecibir)" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a asp-controller="OrdenCompras" asp-action="Details" asp-route-id="@Model.IdOrdenCompra" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check2-circle me-1"></i> Confirmar recepción
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

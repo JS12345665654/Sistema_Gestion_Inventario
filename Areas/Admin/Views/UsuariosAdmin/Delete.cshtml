@@ -1,0 +1,23 @@
+﻿@model Sistema_Gestion_Inventario.Data.ApplicationUser
+@{
+    Layout = null; // se inyecta en modal
+}
+<div class="modal-header">
+    <h5 class="modal-title">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+</div>
+<div class="modal-body">
+    <p>¿Seguro que querés eliminar al usuario <strong>@(Model.Email ?? Model.UserName)</strong>?</p>
+</div>
+<div class="modal-footer">
+    <form method="post" action="@Url.Action("Eliminar","UsuariosAdmin", new { area = "Admin" })">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+        </button>
+    </form>
+</div>

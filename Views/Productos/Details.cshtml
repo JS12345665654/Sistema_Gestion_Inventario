@@ -1,0 +1,133 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model Producto
+@{
+    ViewData["Title"] = "Detalle de Producto";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-info-circle me-2"></i>Detalle de producto
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-bold">ID</dt>
+                <dd class="col-sm-9">@Model.IdProducto</dd>
+
+                <dt class="col-sm-3 fw-bold">SKU</dt>
+                <dd class="col-sm-9">@Model.Sku</dd>
+
+                <dt class="col-sm-3 fw-bold">Nombre</dt>
+                <dd class="col-sm-9">@Model.Nombre</dd>
+
+                <dt class="col-sm-3 fw-bold">Categoría</dt>
+                <dd class="col-sm-9">@Model.IdCategoriaNavigation?.Nombre ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Proveedor principal</dt>
+                <dd class="col-sm-9">@Model.IdProveedorPrincipalNavigation?.RazonSocial ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Unidad</dt>
+                <dd class="col-sm-9">@Model.UnidadMedida</dd>
+
+                <dt class="col-sm-3 fw-bold">Costo</dt>
+                <dd class="col-sm-9">@Model.CostoStd.ToString("N2")</dd>
+
+                <dt class="col-sm-3 fw-bold">Precio</dt>
+                <dd class="col-sm-9">@Model.PrecioSugerido.ToString("N2")</dd>
+
+                <dt class="col-sm-3 fw-bold">Código de barras</dt>
+                <dd class="col-sm-9">@Model.CodigoBarras ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Activo</dt>
+                <dd class="col-sm-9">@(Model.Activo ? "Sí" : "No")</dd>
+
+                <!--Imagen -->
+                <dt class="col-sm-3 fw-bold">Imagen</dt>
+                <dd class="col-sm-9">
+                    @if (!string.IsNullOrWhiteSpace(Model.ImagenPath))
+                    {
+                        <img src="@Model.ImagenPath" class="img-thumbnail" style="max-height:160px" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">(sin imagen)</span>
+                    }
+                </dd>
+
+                <!--Ficha técnica -->
+                <dt class="col-sm-3 fw-bold">Ficha técnica</dt>
+                <dd class="col-sm-9">
+                    @if (!string.IsNullOrWhiteSpace(Model.FichaTecnicaPath))
+                    {
+                        <a href="@Model.FichaTecnicaPath" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-file-earmark-pdf"></i> Ver PDF
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">(sin ficha)</span>
+                    }
+                </dd>
+
+                <!-- Etiquetas (chips) vía ViewBag.EtiquetasProducto -->
+                <dt class="col-sm-3 fw-bold">Etiquetas</dt>
+                <dd class="col-sm-9">
+                    @{
+                        var chips = ViewBag.EtiquetasProducto as IEnumerable<dynamic>;
+                    }
+                    @if (chips != null && chips.Any())
+                    {
+                        foreach (var et in chips)
+                        {
+                            var nombre = Convert.ToString(et?.Nombre) ?? "-";
+                            var color = Convert.ToString(et?.ColorHex);
+                            var icono = Convert.ToString(et?.IconoCss);
+
+                            if (!string.IsNullOrWhiteSpace(color))
+                            {
+                                <span class="badge rounded-pill me-1" style="background-color:@color; color:#fff; border:1px solid rgba(0,0,0,.2)">
+                                    @if (!string.IsNullOrWhiteSpace(icono))
+                                    {
+                                        <i class="@icono me-1"></i>
+                                    }
+                                    @nombre
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill me-1">
+                                    @if (!string.IsNullOrWhiteSpace(icono))
+                                    {
+                                        <i class="@icono me-1"></i>
+                                    }
+                                    @nombre
+                                </span>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">(sin etiquetas)</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        <a asp-action="Edit" asp-route-id="@Model.IdProducto" class="btn btn-primary">
+            <i class="bi bi-pencil-square me-1"></i> Editar
+        </a>
+        @if (User.IsInRole("Administrador"))
+        {
+            <a asp-action="Etiquetas" asp-route-id="@Model.IdProducto" class="btn btn-outline-primary">
+                <i class="bi bi-tags"></i> Etiquetas
+            </a>
+        }
+    </div>
+</div>

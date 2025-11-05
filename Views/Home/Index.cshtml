@@ -1,0 +1,139 @@
+﻿@{
+    Layout = "_Layout";
+
+    ViewData["Title"] = "Inicio";
+
+    var hora = DateTime.Now.Hour;
+    var saludo = hora < 12 ? "¡Buenos días"
+                : hora < 19 ? "¡Buenas tardes"
+                : "¡Buenas noches";
+}
+
+<style>
+    .hero-img {
+        height: 360px;
+        object-fit: cover;
+    }
+
+    .card-icon {
+        font-size: 1.4rem;
+        vertical-align: -2px;
+    }
+
+    .floating-dark {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 1050;
+    }
+    .dark-mode {
+        background-color: #121212;
+        color: #f0f0f0;
+    }
+
+        .dark-mode .card {
+            background-color: #1e1e1e;
+            color: #eaeaea;
+        }
+
+        .dark-mode .table {
+            color: #eaeaea;
+        }
+</style>
+
+<div class="container mt-4">
+    <!-- Saludo -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">@saludo! Bienvenido/a al Sistema de Gestión de Inventario</h2>
+        @if (User?.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name))
+        {
+            <p class="text-success">Sesión iniciada como <strong>@User.Identity.Name</strong></p>
+        }
+        else
+        {
+            <p class="text-muted">Sesión no iniciada</p>
+        }
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="row g-4 mb-4 text-center">
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-primary shadow h-100">
+                <div class="card-body d-grid gap-2">
+                    <h5 class="card-title">
+                        <i class="bi bi-box-seam card-icon me-2"></i>Productos
+                    </h5>
+                    <p class="card-text">Catálogo maestro con SKU, unidad y precios.</p>
+                    <a class="btn btn-primary" asp-controller="Productos" asp-action="Index">Ver productos</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-success shadow h-100">
+                <div class="card-body d-grid gap-2">
+                    <h5 class="card-title">
+                        <i class="bi bi-grid-fill card-icon me-2"></i>Categorías
+                    </h5>
+                    <p class="card-text">Organizá tus artículos por familia.</p>
+                    <a class="btn btn-success" asp-controller="Categorias" asp-action="Index">Ver categorías</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-warning shadow h-100">
+                <div class="card-body d-grid gap-2">
+                    <h5 class="card-title">
+                        <i class="bi bi-truck card-icon me-2"></i>Proveedores
+                    </h5>
+                    <p class="card-text">Datos, CUIT, contacto y lead time.</p>
+                    <a class="btn btn-warning text-white" asp-controller="Proveedores" asp-action="Index">Ver proveedores</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-info shadow h-100">
+                <div class="card-body d-grid gap-2">
+                    <h5 class="card-title">
+                        <i class="bi bi-building card-icon me-2"></i>Almacenes
+                    </h5>
+                    <p class="card-text">Multi-depósito para stock por ubicación.</p>
+                    <a class="btn btn-info text-white" asp-controller="Almacenes" asp-action="Index">Ver almacenes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5 text-center">
+        <div class="col-12 col-md-6">
+            <div class="card border-secondary shadow h-100">
+                <div class="card-body d-grid gap-2">
+                    <h5 class="card-title">
+                        <i class="bi bi-receipt-cutoff card-icon me-2"></i>Órdenes de Compra
+                    </h5>
+                    <p class="card-text">Encabezados e ítems con estados y costos.</p>
+                    <a class="btn btn-secondary" asp-controller="OrdenCompras" asp-action="Index">Ir a Órdenes de Compra</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="card border-dark shadow h-100">
+                <div class="card-body d-grid gap-2">
+                    <h5 class="card-title">
+                        <i class="bi bi-arrow-left-right card-icon me-2"></i>Movimientos
+                    </h5>
+                    <p class="card-text">Entradas/Salidas (IN/OUT) y stock actual por almacén.</p>
+                    <a class="btn btn-dark" asp-controller="MovimientoInventarios" asp-action="Index">Ver movimientos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+ 
+}

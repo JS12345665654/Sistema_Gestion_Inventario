@@ -1,0 +1,45 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model Almacen
+@{
+    ViewData["Title"] = "Detalle de Almacén";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-dark fw-bold mb-4">
+        <i class="bi bi-info-circle me-2"></i>Detalle de almacén
+    </h2>
+
+    <div class="card shadow">
+        <div class="card-body bg-light">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-bold">ID</dt>
+                <dd class="col-sm-9">@Model.IdAlmacen</dd>
+
+                <dt class="col-sm-3 fw-bold">Código</dt>
+                <dd class="col-sm-9">@Model.Codigo</dd>
+
+                <dt class="col-sm-3 fw-bold">Nombre</dt>
+                <dd class="col-sm-9">@Model.Nombre</dd>
+
+                <dt class="col-sm-3 fw-bold">Dirección</dt>
+                <dd class="col-sm-9">@Model.Direccion ?? "-"</dd>
+
+                <dt class="col-sm-3 fw-bold">Activo</dt>
+                <dd class="col-sm-9">@(Model.Activo ? "Sí" : "No")</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        @if (User.IsInRole("Administrador"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.IdAlmacen" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i> Editar
+            </a>
+        }
+    </div>
+</div>

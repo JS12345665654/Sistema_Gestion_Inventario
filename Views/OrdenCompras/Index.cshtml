@@ -1,0 +1,138 @@
+﻿@using Sistema_Gestion_Inventario.Data
+@model IEnumerable<OrdenCompra>
+@{
+    ViewData["Title"] = "Órdenes de Compra";
+}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Órdenes de Compra</h1>
+        @if (User.IsInRole("Administrador"))
+        {
+            <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg me-1"></i> Nueva Orden</a>
+        }
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+        <input id="searchInput" type="text" class="form-control w-25" placeholder="Buscar por N° OC, proveedor o almacén...">
+    </div>
+
+    <div class="d-flex justify-content-end mb-4">
+        <form asp-action="ExportarExcel" method="post">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-file-earmark-excel-fill me-1"></i> Exportar a Excel
+            </button>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table id="tabla" class="table table-dark table-hover table-bordered rounded shadow">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>N° OC</th>
+                    <th>Proveedor</th>
+                    <th>Almacén</th>
+                    <th>Estado</th>
+                    <th>Moneda</th>
+                    <th>Emisión</th>
+                    <th>Esperada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model)
+                {
+                    <tr>
+                        <td>@o.IdOrdenCompra</td>
+                        <td>@o.NumeroOc</td>
+                        <td>@(o.IdProveedorNavigation?.RazonSocial ?? "-")</td>
+                        <td>@(o.IdAlmacenRecepcionNavigation?.Codigo ?? "-")</td>
+                        <td>@o.Estado</td>
+                        <td>@o.Moneda</td>
+                        <td>@o.FechaEmision.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@(o.FechaEsperada?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                        <td>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <a class="btn btn-sm btn-warning me-1" asp-action="Edit" asp-route-id="@o.IdOrdenCompra">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                            }
+                            <a class="btn btn-sm btn-info me-1" asp-action="Details" asp-route-id="@o.IdOrdenCompra">
+                                <i class="bi bi-eye-fill"></i> Detalle
+                            </a>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <button type="button" class="btn btn-sm btn-danger btn-eliminar"
+                                        data-url="@Url.Action("Delete", new { id = o.IdOrdenCompra })"
+                                        data-nombre="@o.NumeroOc">
+                                    <i class="bi bi-trash-fill"></i> Borrar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmEliminarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">¿Eliminar <strong id="modalNombre"></strong>?</div>
+            <div class="modal-footer">
+                <form id="formEliminar" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="btnConfirmarEliminar" type="button" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+          $(function(){
+          $('#tabla').DataTable({
+            language: {url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"},
+            ordering: true,
+            paging: true,
+            searching: false,
+            order: [[6, 'desc']],
+            pageLength: 15
+          });
+        });
+        document.getElementById("searchInput").addEventListener("input", function(){
+          const v=this.value.toLowerCase().trim();
+          document.querySelectorAll('#tabla tbody tr').forEach(r=>{
+            const nro=r.cells[1].textContent.toLowerCase();
+            const prov=r.cells[2].textContent.toLowerCase();
+            const alm=r.cells[3].textContent.toLowerCase();
+            r.style.display=(nro.includes(v)||prov.includes(v)||alm.includes(v))?'':'none';
+          });
+        });
+        document.addEventListener('DOMContentLoaded',()=>{
+          let url=null;
+          const modal=new bootstrap.Modal(document.getElementById('confirmEliminarModal'));
+          const btn=document.getElementById('btnConfirmarEliminar');
+          const nameHolder=document.getElementById('modalNombre');
+          const form=document.getElementById('formEliminar');
+          document.querySelectorAll('.btn-eliminar').forEach(b=>{
+            b.addEventListener('click',function(){
+              url=this.dataset.url; nameHolder.textContent=this.dataset.nombre||'esta orden'; modal.show();
+            });
+          });
+          btn.addEventListener('click',()=>{ if(!url) return; form.action=url; form.submit(); });
+        });
+    </script>
+    @if (TempData["toastMsg"] != null)
+    {
+        <script>toastr["@TempData["toastType"] ?? "success"]("@TempData["toastMsg"]");</script>
+    }
+}

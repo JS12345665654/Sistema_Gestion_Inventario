@@ -1,0 +1,173 @@
+﻿@model IEnumerable<UserRoleVM>
+@{
+    ViewData["Title"] = "Usuarios / Roles";
+    Layout = "_Layout";
+}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold"><i class="bi bi-people-fill me-2"></i>Usuarios / Roles</h2>
+
+        <form asp-action="ExportarPDF" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="q" value="@((string?)ViewData["q"] ?? "")" />
+            <button type="submit" class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+            </button>
+        </form>
+    </div>
+
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input class="form-control" name="q" value="@((string?)ViewData["q"] ?? "")" placeholder="Buscar por email/usuario..." />
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Email</th>
+                    <th class="text-center">Admin</th>
+                    <th class="text-center">Usuario</th>
+                    <th style="width:360px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr data-id="@u.Id">
+                        <td>@u.Email</td>
+                        <td class="text-center role-admin">@((u.IsAdmin) ? "Sí" : "No")</td>
+                        <td class="text-center role-usuario">@((u.IsUsuario) ? "Sí" : "No")</td>
+                        <td>
+                            <!-- Navegación -->
+                            <a asp-action="Details" asp-route-id="@u.Id" class="btn btn-sm btn-info ms-2">
+                                <i class="bi bi-eye"></i> Detalles
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+
+                            <!-- Eliminar -->
+                            <button type="button"
+                                    class="btn btn-sm btn-danger ms-2 btn-del"
+                                    data-url="@Url.Action("Delete", "UsuariosAdmin", new { area = "Admin", id = u.Id })">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="modalConfirmContent">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.btn-del').on('click', function () {
+                const url = $(this).data('url');
+                $.ajax({
+                    url: url,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (html) {
+                        $('#modalConfirmContent').html(html);
+                        const m = new bootstrap.Modal(document.getElementById('modalConfirm'));
+                        m.show();
+
+                        $('#modalConfirm form').on('submit', function (ev) {
+                            ev.preventDefault();
+                            const form = this;
+                            $.ajax({
+                                url: '@Url.Action("Eliminar", "UsuariosAdmin", new { area = "Admin" })',
+                                type: 'POST',
+                                data: $(form).serialize(),
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                success: function (res) {
+                                    if (res.ok) {
+                                        location.reload();
+                                    } else {
+                                        alert(res.error || 'No se pudo eliminar.');
+                                    }
+                                },
+                                error: function (xhr) {
+                                    alert(xhr.responseText || 'Error al eliminar.');
+                                }
+                            });
+                        });
+                    },
+                    error: function () {
+                        alert('No se pudo abrir la confirmación.');
+                    }
+                });
+            });
+
+            $('form.role-form').on('submit', function (ev) {
+                ev.preventDefault();
+
+                const $form = $(this);
+                const actionUrl = $form.attr('action');
+                const $row = $form.closest('tr');
+                const userId = $row.data('id');
+
+                if (window.Swal) {
+                    Swal.fire({
+                        title: 'Confirmar',
+                        text: '¿Deseás aplicar este cambio de rol?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí',
+                        cancelButtonText: 'No'
+                    }).then(function (r) {
+                        if (r.isConfirmed) submitRole();
+                    });
+                } else {
+                    if (!confirm('¿Aplicar cambio de rol?')) return;
+                    submitRole();
+                }
+
+                function submitRole() {
+                    $.ajax({
+                        url: actionUrl,
+                        type: 'POST',
+                        data: $form.serialize(),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        success: function (res) {
+                            if (res && res.ok) {
+                                $.get('@Url.Action("Index", "UsuariosAdmin", new { area = "Admin" })', { q: '@((string?)ViewData["q"] ?? "")' })
+                                    .done(function (html) {
+                                        const tmp = $('<div>').html(html);
+                                        const newRow = tmp.find('tr[data-id="' + userId + '"]');
+                                        if (newRow.length) {
+                                            $row.find('.role-admin').text(newRow.find('.role-admin').text());
+                                            $row.find('.role-usuario').text(newRow.find('.role-usuario').text());
+                                        }
+                                        if (window.toastr) toastr.success('Rol actualizado.');
+                                    });
+                            } else {
+                                const msg = (res && res.error) ? res.error : 'No se pudo actualizar el rol.';
+                                if (window.toastr) toastr.error(msg); else alert(msg);
+                            }
+                        },
+                        error: function (xhr) {
+                            const msg = xhr.responseText || 'Error al actualizar el rol.';
+                            if (window.toastr) toastr.error(msg); else alert(msg);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    @if (TempData["toastMsg"] != null)
+    {
+        <script>toastr["@TempData["toastType"] ?? "success"]("@TempData["toastMsg"]");</script>
+    }
+}
